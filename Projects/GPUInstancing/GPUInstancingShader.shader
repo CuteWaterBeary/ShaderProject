@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced 'UNITY_INSTANCE_ID' with 'UNITY_VERTEX_INPUT_INSTANCE_ID'
+﻿// Upgrade NOTE: upgraded instancing buffer 'MyProperties' to new syntax.
+
+// Upgrade NOTE: replaced 'UNITY_INSTANCE_ID' with 'UNITY_VERTEX_INPUT_INSTANCE_ID'
 
 Shader "Ellioman/GPUInstancing"
 {
@@ -46,10 +48,11 @@ Shader "Ellioman/GPUInstancing"
             // UNITY_INSTANCING_CBUFFER_START(name) / UNITY_INSTANCING_CBUFFER_END 
             // Every per-instance property must be defined in a specially named constant buffer. 
             // Use this pair of macros to wrap the properties you want to be made unique to each instance.
-            UNITY_INSTANCING_CBUFFER_START (MyProperties)
+            UNITY_INSTANCING_BUFFER_START (MyProperties)
             // This defines a per-instance Shader property with a type and a name. In this example, the _color property is unique.
             UNITY_DEFINE_INSTANCED_PROP (float4, _Color)
-            UNITY_INSTANCING_CBUFFER_END
+#define _Color_arr MyProperties
+            UNITY_INSTANCING_BUFFER_END(MyProperties)
 
             // Vertex Shader
             v2f vert (appdata v)
@@ -83,7 +86,7 @@ Shader "Ellioman/GPUInstancing"
                 UNITY_SETUP_INSTANCE_ID (i);
 
                 // This accesses a per-instance Shader property. It uses an instance ID to index into the instance data array.
-                return UNITY_ACCESS_INSTANCED_PROP (_Color);
+                return UNITY_ACCESS_INSTANCED_PROP (_Color_arr, _Color);
             }
             ENDCG
         }
